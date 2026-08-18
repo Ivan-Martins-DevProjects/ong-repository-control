@@ -14,7 +14,7 @@ jobs:
     name: Notificar endpoint de deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Chamar endpoint de deploy
+      - name: Deploy em Produção
         env:
           WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
           DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
