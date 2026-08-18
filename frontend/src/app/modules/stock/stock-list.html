@@ -1,0 +1,36 @@
+<div class="stock-list">
+  <div class="toolbar">
+    <h1>Tipos de Produtos</h1>
+    <button class="btn btn-primary" (click)="add.emit()">
+      <span class="material-symbols-outlined">add</span> Novo Tipo
+    </button>
+  </div>
+
+  <ng-content></ng-content>
+
+  <div class="cards">
+    @if (loading()) {
+      <p class="empty">Carregando...</p>
+    } @else {
+      @for (cat of categories(); track cat.id) {
+        <div class="card-item" (click)="openItems(cat)">
+          <div class="card-count">{{ cat.total }}</div>
+          <div class="card-info">
+            <span class="card-name">{{ cat.name }}</span>
+          </div>
+          <span class="card-category">{{ cat.category }}</span>
+          <div class="card-actions">
+            <button class="btn btn-sm" title="Editar tipo de produto" (click)="$event.stopPropagation(); edit.emit(cat)">
+              Editar
+            </button>
+            <button class="btn btn-sm btn-danger" title="Excluir tipo de produto" (click)="$event.stopPropagation(); remove.emit(cat)">
+              Excluir
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <p class="empty">Nenhum produto cadastrado.</p>
+      }
+    }
+  </div>
+</div>

@@ -1,0 +1,12 @@
+FROM node:22-alpine AS build
+WORKDIR /app
+
+COPY frontend/package.json frontend/package-lock.json ./
+
+RUN npm ci
+
+EXPOSE 4200
+
+ENV NG_CLI_ANALYTICS=false
+
+ENTRYPOINT ["npx", "ng", "serve", "--host", "0.0.0.0", "--poll", "500"]

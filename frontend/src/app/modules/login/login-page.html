@@ -1,0 +1,28 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-header">
+      <span class="material-symbols-outlined login-icon">inventory_2</span>
+      <h1>ONG Estoque</h1>
+      <p>Acesse sua conta</p>
+    </div>
+    <form #f="ngForm" (ngSubmit)="doLogin()">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" [(ngModel)]="email" #emailField="ngModel" required placeholder="seu@email.com" />
+      </div>
+      <div class="field">
+        <label for="password">Senha</label>
+        <input id="password" type="password" name="password" [(ngModel)]="password" #passwordField="ngModel" required placeholder="••••••••" />
+      </div>
+      @if (error()) {
+        <p class="error">{{ errorMessage() }}</p>
+      }
+      <button type="submit" class="btn btn-primary btn-full" [disabled]="f.invalid || loading()">
+        @if (loading()) {
+          <span class="spinner"></span>
+        }
+        {{ loading() ? 'Entrando...' : 'Entrar' }}
+      </button>
+    </form>
+  </div>
+</div>

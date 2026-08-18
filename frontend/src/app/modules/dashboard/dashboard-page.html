@@ -1,0 +1,63 @@
+<div class="page">
+  <h1>Dashboard</h1>
+
+  <div class="summary">
+    <div class="stat-card">
+      <span class="stat-icon blue"><span class="material-symbols-outlined">package_2</span></span>
+      <div><span class="stat-value">{{ totalTypes() }}</span><span class="stat-label">Itens</span></div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon green"><span class="material-symbols-outlined">inventory</span></span>
+      <div><span class="stat-value">{{ totalUnits() }}</span><span class="stat-label">Unidades</span></div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon orange"><span class="material-symbols-outlined">calendar_month</span></span>
+      <div><span class="stat-value">{{ expiringSoon() }}</span><span class="stat-label">Vencem em 30d</span></div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="empty">Carregando...</p>
+  }
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h2>Movimentação Mensal</h2>
+      <div class="chart-wrapper"><canvas #lineCanvas></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h2>Total Entradas vs Saídas</h2>
+      <div class="chart-wrapper"><canvas #pieCanvas></canvas></div>
+    </div>
+  </div>
+
+  <section>
+    <h2>Últimas movimentações</h2>
+    <div class="cards">
+      @for (m of recentMovements(); track m.id) {
+        <div class="movement-item">
+          <div class="movement-icon" [class.entry]="m.type === 'entry'" [class.exit]="m.type === 'exit'">
+            <span class="material-symbols-outlined">{{ m.type === 'entry' ? 'add_circle' : 'remove_circle' }}</span>
+          </div>
+          <div class="movement-body">
+            <div class="movement-title">{{ m.itemName }}</div>
+            @if (m.description) {
+              <div class="movement-desc">{{ m.description }}</div>
+            }
+            <div class="movement-meta-row">
+              <span class="mov-badge" [class.process]="m.source === 'process'" [class.item]="m.source !== 'process'">
+                {{ m.source === 'process' ? 'Processo' : 'Item' }}
+              </span>
+              <span class="mov-date">{{ m.date | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+          <div class="movement-qty" [class.entry]="m.type === 'entry'" [class.exit]="m.type === 'exit'">
+            {{ m.type === 'entry' ? '+' : '-' }}{{ m.quantity }}
+          </div>
+        </div>
+      } @empty {
+        <p class="empty">Nenhuma movimentação registrada.</p>
+      }
+    </div>
+  </section>
+</div>

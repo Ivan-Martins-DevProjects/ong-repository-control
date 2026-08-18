@@ -1,0 +1,12 @@
+<div class="app-layout">
+  <button class="hamburger" (click)="toggleSidebar()">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+  <div class="sidebar-overlay" [class.open]="sidebarOpen()" (click)="closeSidebar()"></div>
+  @if (!hideSidebar()) {
+    <app-sidebar [open]="sidebarOpen()" (navigate)="closeSidebar()" />
+  }
+  <main>
+    <router-outlet />
+  </main>
+</div>

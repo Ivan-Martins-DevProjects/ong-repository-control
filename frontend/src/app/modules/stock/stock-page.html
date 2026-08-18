@@ -1,0 +1,70 @@
+<div class="page">
+  @if (error()) {
+    <div class="alert-error">{{ error() }}</div>
+  }
+
+  <app-stock-list
+    [categories]="groups()"
+    [loading]="loading()"
+    (add)="openAdd()"
+    (edit)="openEdit($event)"
+    (remove)="requestDelete($event)"
+  >
+    <div class="stock-filters">
+      <app-item-filter
+        [expanded]="true"
+        [fields]="stockFilterFields()"
+        [filterValues]="activeStockFilter()"
+        (apply)="onApplyStockFilter($event)"
+        (clear)="onClearStockFilter()"
+      />
+    </div>
+  </app-stock-list>
+
+  @if (totalPages() > 1) {
+    <div class="pagination">
+      <button class="btn btn-sm" (click)="goPage(page() - 1)" [disabled]="page() <= 1">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      <span class="page-info">{{ page() }} / {{ totalPages() }}</span>
+      <button class="btn btn-sm" (click)="goPage(page() + 1)" [disabled]="page() >= totalPages()">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+  }
+</div>
+
+@if (showForm()) {
+  <div class="overlay" (click)="closeForm()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>{{ editing() ? 'Editar Tipo de Produto' : 'Novo Tipo de Produto' }}</h2>
+      <div class="field"><label>Nome do produto</label><input [(ngModel)]="formName" placeholder="ex: Arroz - Pacote 5Kg" /></div>
+      <div class="field"><label>Categoria</label>
+        <select [(ngModel)]="formCategory">
+          @for (cat of formCats(); track cat) {
+            <option [value]="cat">{{ cat || 'Sem categoria' }}</option>
+          }
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" (click)="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" (click)="saveItem()" [disabled]="!formName || saving()">{{ saving() ? 'Salvando...' : 'Salvar' }}</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (deleting(); as group) {
+  <div class="overlay" (click)="closeDelete()">
+    <div class="modal confirm-modal" (click)="$event.stopPropagation()">
+      <span class="material-symbols-outlined confirm-icon">warning</span>
+      <h2>Excluir tipo de produto?</h2>
+      <p>O tipo <strong>{{ group.name }}</strong> possui <strong>{{ group.count }} item(ns)</strong> associados.</p>
+      <p>Se você excluir, todos os itens associados a ele também serão <strong>excluídos do banco de dados</strong>.</p>
+      <div class="modal-actions">
+        <button class="btn" (click)="closeDelete()">Cancelar</button>
+        <button class="btn btn-danger" (click)="doDelete(group)" [disabled]="deletingBusy()">{{ deletingBusy() ? 'Excluindo...' : 'Excluir' }}</button>
+      </div>
+    </div>
+  </div>
+}

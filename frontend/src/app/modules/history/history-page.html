@@ -1,0 +1,496 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Histórico</h1>
+    <div class="header-actions">
+      <button class="btn btn-outline-primary" (click)="openMovement('entry')">
+        <span class="material-symbols-outlined">add_circle</span> Nova Entrada
+      </button>
+      <button class="btn btn-outline-primary" (click)="openMovement('exit')">
+        <span class="material-symbols-outlined">remove_circle</span> Nova Saída
+      </button>
+      <button class="btn btn-primary" (click)="openCreate()">
+        <span class="material-symbols-outlined">assignment</span> Novo Processo
+      </button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab" [class.active]="currentSection() === 'movements'" (click)="switchSection('movements')">Movimentações</button>
+    <button class="tab" [class.active]="currentSection() === 'processes'" (click)="switchSection('processes')">Processos</button>
+  </div>
+
+  @if (currentSection() === 'movements') {
+    <div class="movement-filters">
+      <app-item-filter
+        [expanded]="true"
+        [fields]="movementFilterFields"
+        [filterValues]="activeMovementFilter()"
+        (apply)="onApplyMovementFilter($event)"
+        (clear)="onClearMovementFilter()"
+      />
+    </div>
+    <div class="cards">
+      @for (m of movements(); track m.id) {
+        <div class="item-card" (click)="openMovementDetail(m)" title="Ver itens desta movimentação">
+          <div class="item-icon" [class.entry]="m.type === 'entry'" [class.exit]="m.type === 'exit'">
+            <span class="material-symbols-outlined">{{ m.type === 'entry' ? 'add_circle' : 'remove_circle' }}</span>
+          </div>
+          <div class="item-body">
+            <div class="item-title">{{ m.itemName }}</div>
+            @if (m.description) {
+              <div class="item-desc">{{ m.description }}</div>
+            }
+            <div class="item-meta-row">
+              <span class="mov-badge" [class.process]="m.source === 'process'" [class.item]="m.source !== 'process'">
+                {{ m.source === 'process' ? 'Processo' : 'Item' }}
+              </span>
+              <span class="mov-date">{{ m.date | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+          <div class="item-qty" [class.entry]="m.type === 'entry'" [class.exit]="m.type === 'exit'">
+            {{ m.type === 'entry' ? '+' : '-' }}{{ m.quantity }}
+          </div>
+        </div>
+      } @empty {
+        <p class="empty">Nenhuma movimentação registrada.</p>
+      }
+    </div>
+    @if (movementTotalPages() > 1) {
+      <div class="pagination">
+        <button class="btn btn-sm" (click)="goMovementPage(movementPage() - 1)" [disabled]="movementPage() <= 1">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <span class="page-info">{{ movementPage() }} / {{ movementTotalPages() }}</span>
+        <button class="btn btn-sm" (click)="goMovementPage(movementPage() + 1)" [disabled]="movementPage() >= movementTotalPages()">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+    }
+  }
+
+  @if (currentSection() === 'processes') {
+    @if (processDetailView(); as p) {
+      <div class="detail-header">
+        <button class="btn btn-sm" (click)="backToProcessList()">
+          <span class="material-symbols-outlined">arrow_back</span> Voltar
+        </button>
+        <div class="detail-header-info">
+          <h2>{{ p.name }}</h2>
+          <span class="process-meta">{{ p.startDate | date:'dd/MM/yyyy' }} a {{ p.endDate | date:'dd/MM/yyyy' }} &middot; <span class="status" [class]="p.status">{{ p.status }}</span></span>
+        </div>
+        <button class="btn btn-sm" (click)="toggleDetailView()">
+          <span class="material-symbols-outlined">{{ showDetailed() ? 'summarize' : 'list' }}</span>
+          {{ showDetailed() ? 'Resumir' : 'Detalhar' }}
+        </button>
+        <span class="detail-header-count">{{ processItems().length }} item{{ processItems().length !== 1 ? 'ns' : '' }}</span>
+      </div>
+      @if (p.description) { <p class="detail-desc">{{ p.description }}</p> }
+
+      @if (!showDetailed()) {
+        <div class="items-list">
+          @for (g of summaryGroups(); track g.name) {
+            <div class="summary-card" (click)="toggleDetailView()">
+              <div class="summary-count">{{ g.count }}</div>
+              <div class="summary-right">
+                <div class="summary-name">{{ g.name }}</div>
+                <div class="summary-meta">item{{ g.count > 1 ? 'ns' : '' }}</div>
+              </div>
+            </div>
+          } @empty {
+            <p class="empty">Nenhum item registrado neste processo.</p>
+          }
+        </div>
+      } @else {
+        <div class="items-list">
+          @for (item of processItems(); track item.id) {
+            <div class="item-detail-card">
+              <div class="item-detail-body">
+                <div class="item-detail-top">
+                  <span class="item-detail-id">#{{ item.id }}</span>
+                  <span class="item-detail-name">{{ item.name }}</span>
+                </div>
+                <div class="item-detail-info">
+                  <span class="info-tag"><span class="material-symbols-outlined">category</span> {{ getTypeName(item.productTypeId) }}</span>
+                  <span class="info-tag"><span class="material-symbols-outlined">calendar_month</span> Val: {{ item.expiryDate || 'Não informada' }}</span>
+                </div>
+              </div>
+              @if (p.status !== 'completed') {
+                <button class="btn btn-sm btn-icon btn-danger" (click)="removeItem(p.id, item.id)" title="Remover item">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              }
+            </div>
+          } @empty {
+            <p class="empty">Nenhum item registrado neste processo.</p>
+          }
+        </div>
+        @if (itemTotalPages() > 1) {
+          <div class="pagination">
+            <button class="btn btn-sm" (click)="goItemPage(itemPage() - 1)" [disabled]="itemPage() <= 1">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <span class="page-info">{{ itemPage() }} / {{ itemTotalPages() }}</span>
+            <button class="btn btn-sm" (click)="goItemPage(itemPage() + 1)" [disabled]="itemPage() >= itemTotalPages()">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        }
+      }
+    } @else {
+      <div class="process-filters">
+        <app-item-filter
+          [expanded]="true"
+          [fields]="filterFields"
+          [filterValues]="activeProcessFilter()"
+          (apply)="onApplyProcessFilter($event)"
+          (clear)="onClearProcessFilter()"
+        />
+      </div>
+      <div class="process-list">
+        @for (p of filteredProcesses(); track p.id) {
+          <div class="process-card" (click)="viewProcess(p)">
+            <div class="process-top">
+              <div>
+                <div class="process-name">{{ p.name }}</div>
+                <div class="process-meta">{{ p.startDate | date:'dd/MM/yyyy' }} a {{ p.endDate | date:'dd/MM/yyyy' }} &middot;
+                  <span class="type-badge" [class.entry]="p.type === 'entry'" [class.exit]="p.type === 'exit'">{{ p.type === 'entry' ? 'Entrada' : 'Saída' }}</span>
+                  &middot; <span class="status" [class]="p.status">{{ p.status }}</span>
+                </div>
+              </div>
+              <div class="process-actions">
+                @if (p.status === 'active') {
+                  <button class="btn btn-sm btn-primary" (click)="$event.stopPropagation(); startCounting(p)">
+                    {{ p.type === 'exit' ? 'Selecionar' : 'Contar' }}
+                  </button>
+                }
+                @if (p.status === 'paused') {
+                  <button class="btn btn-sm btn-outline-primary" (click)="$event.stopPropagation(); resumeProcess(p)">Retomar</button>
+                }
+                @if (p.status === 'active' || p.status === 'paused') {
+                  <button class="btn btn-sm btn-danger" (click)="$event.stopPropagation(); cancelProcess(p)">Cancelar</button>
+                }
+              </div>
+            </div>
+            @if (p.description) { <div class="process-desc">{{ p.description }}</div> }
+          </div>
+        } @empty {
+          <p class="empty">Nenhum processo criado.</p>
+        }
+      </div>
+      @if (processTotalPages() > 1) {
+        <div class="pagination">
+          <button class="btn btn-sm" (click)="goProcessPage(processPage() - 1)" [disabled]="processPage() <= 1">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <span class="page-info">{{ processPage() }} / {{ processTotalPages() }}</span>
+          <button class="btn btn-sm" (click)="goProcessPage(processPage() + 1)" [disabled]="processPage() >= processTotalPages()">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      }
+    }
+  }
+</div>
+
+<!-- MOVEMENT MODAL -->
+@if (showMovementModal()) {
+  <div class="overlay" (click)="closeMovementModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>
+        <span class="material-symbols-outlined" [class.entry]="movementType() === 'entry'" [class.exit]="movementType() === 'exit'">
+          {{ movementType() === 'entry' ? 'add_circle' : 'remove_circle' }}
+        </span>
+        {{ movementType() === 'entry' ? 'Nova Entrada' : 'Nova Saída' }}
+      </h2>
+
+      <div class="count-field">
+        <label>Pesquisar item</label>
+        <input type="text" [(ngModel)]="movementSearch" (input)="onMovementSearchInput()" placeholder="Digite o nome do item..." autocomplete="off" />
+        @if (movementSuggestions().length > 0) {
+          <div class="suggestions">
+            @for (item of movementSuggestions(); track item.id) {
+              <div class="suggestion" (click)="selectMovementSuggestion(item)">
+                <div class="suggestion-main">
+                  <strong>{{ item.description || item.name }}</strong>
+                  <span class="suggestion-sub">
+                    <span>Estoque: {{ item.quantity }} {{ item.unit }}</span>
+                    @if (item.expiryDate) { <span>Val: {{ item.expiryDate | date:'shortDate' }}</span> }
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else if (movementSearch.trim().length >= 3) {
+          <div class="suggestion text-muted" style="cursor:default">Nenhum item encontrado.</div>
+        }
+      </div>
+
+      @if (movementSelected(); as sel) {
+        <div class="selected-movement">
+          <div class="item-title">{{ sel.description || sel.name }}</div>
+          <div class="selected-stock">Estoque atual: {{ sel.quantity }} {{ sel.unit }}</div>
+        </div>
+
+        <div class="count-field">
+          <label>Quantidade</label>
+          <input type="number" [(ngModel)]="movementQty" min="1" />
+        </div>
+        <div class="count-field">
+          <label>Descrição <span class="optional">(opcional)</span></label>
+          <input [(ngModel)]="movementDesc" />
+        </div>
+        @if (movementError()) {
+          <div class="alert-error">{{ movementError() }}</div>
+        }
+        <div class="modal-actions">
+          <button class="btn" (click)="closeMovementModal()">Cancelar</button>
+          <button class="btn btn-primary" (click)="submitMovement()"
+            [disabled]="movementQty < 1 || movementBusy() || (movementType() === 'exit' && movementQty > sel.quantity)">
+            {{ movementBusy() ? 'Registrando...' : 'Registrar' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- CREATE PROCESS MODAL -->
+@if (showCreateModal()) {
+  <div class="overlay" (click)="closeCreate()">
+    <div class="modal create-modal" (click)="$event.stopPropagation()">
+
+      @if (createStep() === 'type') {
+        <h2>Novo Processo</h2>
+        <div class="create-types">
+          <button class="create-type-card entry" (click)="selectCreateType('entry')">
+            <span class="material-symbols-outlined">add_circle</span>
+            <span class="create-type-label">Entrada</span>
+          </button>
+          <button class="create-type-card exit" (click)="selectCreateType('exit')">
+            <span class="material-symbols-outlined">remove_circle</span>
+            <span class="create-type-label">Saída</span>
+          </button>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" (click)="closeCreate()">Cancelar</button>
+        </div>
+      }
+
+      @if (createStep() === 'form') {
+        <div class="create-form-header">
+          <button class="btn btn-sm" (click)="createStep.set('type')">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+          <h2>{{ formType === 'entry' ? 'Nova Entrada' : 'Nova Saída' }}</h2>
+        </div>
+        <div class="field"><label>Título</label><input [(ngModel)]="formName" placeholder="ex: Doação julho" /></div>
+        <div class="field"><label>Descrição <span class="optional">(opcional)</span></label><input [(ngModel)]="formDesc" /></div>
+        <div class="field-row">
+          <div class="field"><label>Início</label><input type="date" [(ngModel)]="formStart" /></div>
+          <div class="field"><label>Término</label><input type="date" [(ngModel)]="formEnd" /></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" (click)="closeCreate()">Cancelar</button>
+          <button class="btn btn-primary" (click)="submitCreate()" [disabled]="!formName">Criar</button>
+        </div>
+      }
+
+    </div>
+  </div>
+}
+
+<!-- COUNTING MODAL -->
+@if (showCountModal()) {
+  <div class="overlay">
+    <div class="modal counting-modal" (click)="$event.stopPropagation()">
+      <div class="counting-header">
+        <h2>
+          <span class="material-symbols-outlined" [class.entry]="activeProcess()?.type === 'entry'" [class.exit]="activeProcess()?.type === 'exit'">
+            {{ activeProcess()?.type === 'exit' ? 'remove_circle' : 'add_circle' }}
+          </span>
+          {{ activeProcess()?.name }}
+        </h2>
+        <div class="counting-header-actions">
+          <button class="btn btn-sm" (click)="pauseCounting()"><span class="material-symbols-outlined">pause</span> Pausar</button>
+          <button class="btn btn-sm btn-primary" (click)="finishCounting()"><span class="material-symbols-outlined">check</span> Finalizar</button>
+        </div>
+      </div>
+
+      @if (activeProcess()?.type === 'entry') {
+        <div class="count-field">
+          <label>Tipo de produto</label>
+          <select [(ngModel)]="countTypeId" (change)="onTypeChange()">
+            <option [ngValue]="null" disabled>Selecione um tipo</option>
+            @for (t of productTypes(); track t.id) {
+              <option [ngValue]="t.id">{{ t.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="count-field">
+          <label>Nome do item</label>
+          <input type="text" [(ngModel)]="countName" (input)="onCountNameInput()" placeholder="Digite o nome do item..." autofocus />
+          @if (countSearchResults().length > 0) {
+            <div class="suggestions">
+              @for (s of countSearchResults(); track s.id) {
+                <div class="suggestion" (click)="selectStock(s)">
+                  <strong>{{ s.name }}</strong>
+                  <span class="text-muted" style="margin-left:auto">{{ s.quantity }} em estoque</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        @if (countTypeId) {
+          <div class="count-field">
+            <label>Unidade</label>
+            <input type="text" [value]="countUnit" disabled />
+          </div>
+        }
+
+        <div class="count-field">
+          <label>Data de validade <span class="optional">(opcional)</span></label>
+          <input type="date" [(ngModel)]="countExpiry" />
+        </div>
+
+        <button class="btn btn-primary btn-full" (click)="submitItem()" [disabled]="!countName.trim() || !countTypeId">
+          <span class="material-symbols-outlined">add</span>
+          Adicionar {{ countName ? '"' + countName + '"' : '' }}
+        </button>
+
+        <div class="counted-list">
+          <h3>Lista Temporária ({{ inboundItems().filter(i => i.processId === activeProcess()?.id).length }})</h3>
+          @for (item of inboundItems().filter(i => i.processId === activeProcess()?.id); track item.id) {
+            <div class="counted-item">
+              <span>{{ item.name }}</span>
+            </div>
+          } @empty {
+            <p class="empty-count">Nenhum item registrado.</p>
+          }
+        </div>
+      }
+
+      @if (activeProcess()?.type === 'exit') {
+        <div class="count-field">
+          <label>Tipo de produto</label>
+          <select [(ngModel)]="exitTypeId" (change)="onExitTypeChange()">
+            <option [ngValue]="null" disabled>Selecione um tipo</option>
+            @for (t of productTypes(); track t.id) {
+              <option [ngValue]="t.id">{{ t.name }}</option>
+            }
+          </select>
+        </div>
+
+        @if (exitTypeId) {
+          <div class="count-field">
+            <label>Pesquisar item</label>
+            <input type="text" [(ngModel)]="exitSearch" (input)="onExitSearchInput()" placeholder="Digite o nome do item..." autocomplete="off" />
+            @if (exitSuggestions().length > 0) {
+              <div class="suggestions">
+                @for (item of exitSuggestions(); track item.id) {
+                  <div class="suggestion" (click)="selectExitSuggestion(item)">
+                    <div class="suggestion-main">
+                      <strong>{{ item.description || item.name }}</strong>
+                      <span class="suggestion-sub">
+                        <span>Val: {{ item.expiryDate ? (item.expiryDate | date:'shortDate') : 'Não informada' }}</span>
+                        @if (item.donor) { <span>Doador: {{ item.donor }}</span> }
+                      </span>
+                    </div>
+                    <span class="text-muted" style="margin-left:auto">+</span>
+                  </div>
+                }
+              </div>
+            } @else if (exitSearch.trim().length >= 3) {
+              <div class="suggestion text-muted" style="cursor:default">Nenhum item encontrado.</div>
+            }
+            @if (exitSearch.trim().length > 0 && exitSearch.trim().length < 3) {
+              <div class="suggestion text-muted" style="cursor:default">Digite ao menos 3 caracteres.</div>
+            }
+          </div>
+
+          <div class="counted-list">
+            <h3>Lista Temporária ({{ exitTempItems().length }} item{{ exitTempItems().length !== 1 ? 'ns' : '' }})</h3>
+            @for (item of exitPaginatedTemp(); track item.id) {
+              <div class="counted-item">
+                <span>{{ item.description || item.name }}</span>
+                <button class="btn-icon-danger" title="Remover" (click)="removeFromExitList(item.id)">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
+            } @empty {
+              <p class="empty-count">Nenhum item selecionado.</p>
+            }
+            @if (exitTempPages() > 1) {
+              <div class="pagination">
+                <button class="btn btn-sm" (click)="goExitTempPage(exitTempPage() - 1)" [disabled]="exitTempPage() <= 1">
+                  <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+                <span class="page-info">{{ exitTempPage() }} / {{ exitTempPages() }}</span>
+                <button class="btn btn-sm" (click)="goExitTempPage(exitTempPage() + 1)" [disabled]="exitTempPage() >= exitTempPages()">
+                  <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+              </div>
+            }
+          </div>
+
+          <button class="btn btn-primary btn-full" (click)="submitExitItems()" [disabled]="exitTempItems().length === 0">
+            <span class="material-symbols-outlined">check</span>
+            Remover {{ exitTempItems().length }} item{{ exitTempItems().length !== 1 ? 'ns' : '' }} do estoque
+          </button>
+        }
+      }
+    </div>
+  </div>
+}
+
+<!-- MOVEMENT DETAIL MODAL -->
+@if (movementDetail(); as m) {
+  <div class="overlay" (click)="closeMovementDetail()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>
+        <span class="material-symbols-outlined" [class.entry]="m.type === 'entry'" [class.exit]="m.type === 'exit'">
+          {{ m.type === 'entry' ? 'add_circle' : 'remove_circle' }}
+        </span>
+        {{ m.description || m.itemName }}
+      </h2>
+      <div class="movement-detail-meta">
+        <span class="mov-badge" [class.process]="m.source === 'process'" [class.item]="m.source !== 'process'">
+          {{ m.source === 'process' ? 'Processo' : 'Item' }}
+        </span>
+        <span class="mov-date">{{ m.date | date:'dd/MM/yyyy' }}</span>
+        @if (!movementDetailLoading()) {
+          <span class="movement-detail-count">{{ movementDetailItems().length }} item{{ movementDetailItems().length !== 1 ? 'ns' : '' }}</span>
+        }
+      </div>
+      <div class="movement-detail-list">
+        @for (it of movementDetailItems(); track it.id) {
+          <div class="movement-detail-row">
+            <span class="item-title">{{ it.itemName }}</span>
+            <span class="item-qty" [class.entry]="it.type === 'entry'" [class.exit]="it.type === 'exit'">
+              {{ it.type === 'entry' ? '+' : '-' }}{{ it.quantity }}
+            </span>
+          </div>
+        } @empty {
+          @if (!movementDetailLoading()) {
+            <p class="empty-count">Nenhum item.</p>
+          }
+        }
+      </div>
+      @if (movementDetailTotalPages() > 1) {
+        <div class="pagination">
+          <button class="btn btn-sm" (click)="goMovementDetailPage(movementDetailPage() - 1)" [disabled]="movementDetailPage() <= 1">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <span class="page-info">{{ movementDetailPage() }} / {{ movementDetailTotalPages() }}</span>
+          <button class="btn btn-sm" (click)="goMovementDetailPage(movementDetailPage() + 1)" [disabled]="movementDetailPage() >= movementDetailTotalPages()">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      }
+      <div class="modal-actions">
+        <button class="btn" (click)="closeMovementDetail()">Fechar</button>
+      </div>
+    </div>
+  </div>
+}

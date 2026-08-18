@@ -1,0 +1,29 @@
+:host { display: contents; }
+.app-layout { display: flex; min-height: 100dvh; }
+main { flex: 1; background: #0f172a; overflow-y: auto; min-width: 0; margin-left: 0; }
+
+.sidebar-overlay {
+  display: none;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 999;
+}
+
+.hamburger {
+  display: none;
+  position: fixed; top: 0.75rem; left: 0.75rem; z-index: 1001;
+  width: 2.25rem; height: 2.25rem; border-radius: 8px;
+  background: #1e293b; border: 1px solid #334155;
+  color: #94a3b8; cursor: pointer;
+  align-items: center; justify-content: center;
+}
+.hamburger:hover { background: #334155; color: #e2e8f0; }
+
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .sidebar-overlay.open { display: block; }
+}
+
+@media (min-width: 769px) {
+  .sidebar-overlay { display: none !important; }
+  main { margin-left: 240px; }
+}

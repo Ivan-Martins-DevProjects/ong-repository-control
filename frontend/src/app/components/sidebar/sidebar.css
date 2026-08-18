@@ -1,0 +1,38 @@
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0;
+  width: 240px; height: 100dvh; background: #1e293b; color: #94a3b8;
+  display: flex; flex-direction: column; padding: 1rem;
+  flex-shrink: 0; border-right: 1px solid #334155;
+  overflow-y: auto;
+  transition: transform 0.2s ease;
+}
+.logo { display: flex; align-items: center; gap: 0.625rem; padding: 0.5rem 0.75rem; margin-bottom: 1.5rem; }
+.logo-icon { font-size: 1.75rem; color: #60a5fa; }
+.logo-text { font-size: 1.125rem; font-weight: 700; color: #f1f5f9; }
+nav { display: flex; flex-direction: column; gap: 0.25rem; }
+.nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 0.875rem; font-weight: 500; transition: all 0.15s; }
+.nav-item:hover { background: #334155; color: #e2e8f0; }
+.nav-item.active { background: rgba(59,130,246,0.15); color: #60a5fa; font-weight: 600; }
+.nav-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+.nav-item.sub { padding-left: 2.5rem; }
+.nav-group { display: flex; flex-direction: column; }
+.nav-group-header { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; font-size: 0.875rem; font-weight: 500; color: #64748b; }
+
+.sidebar-footer { margin-top: auto; border-top: 1px solid #334155; padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.user-info { display: flex; flex-direction: column; gap: 0.125rem; padding: 0 0.75rem; }
+.user-name { font-size: 0.8125rem; font-weight: 600; color: #e2e8f0; }
+.user-email { font-size: 0.6875rem; color: #64748b; }
+.btn-logout { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border: none; border-radius: 8px; background: transparent; color: #94a3b8; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.15s; width: 100%; }
+.btn-logout:hover { background: rgba(239,68,68,0.1); color: #f87171; }
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 1000; transform: translateX(-100%);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.4);
+  }
+  .sidebar.open { transform: translateX(0); }
+}
+@media (min-width: 769px) {
+  .sidebar { transform: none !important; }
+}

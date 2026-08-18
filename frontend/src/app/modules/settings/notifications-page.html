@@ -1,0 +1,49 @@
+<div class="page">
+  <h1>Notificações</h1>
+  <p class="subtitle">Configure os eventos e os emails que receberão as notificações.</p>
+
+  <div class="card">
+    <h2>Eventos</h2>
+    <div class="checks">
+      <label class="check">
+        <input type="checkbox" [checked]="config.onEntry" (change)="toggle('onEntry')" />
+        <span class="check-mark"></span>
+        Entrada de item
+      </label>
+      <label class="check">
+        <input type="checkbox" [checked]="config.onExit" (change)="toggle('onExit')" />
+        <span class="check-mark"></span>
+        Saída de item
+      </label>
+      <label class="check">
+        <input type="checkbox" [checked]="config.onExpiry" (change)="toggle('onExpiry')" />
+        <span class="check-mark"></span>
+        Vencimento de item
+      </label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Emails</h2>
+    <p class="desc">Os emails abaixo serão notificados quando os eventos selecionados ocorrerem.</p>
+    <div class="add-row">
+      <input [(ngModel)]="newEmail" (keyup.enter)="addEmail()" placeholder="email@exemplo.com" type="email" />
+      <button class="btn btn-primary" (click)="addEmail()">
+        <span class="material-symbols-outlined">add</span> Adicionar
+      </button>
+    </div>
+    <div class="email-list">
+      @for (email of config.emails; track email) {
+        <div class="email-item">
+          <span class="material-symbols-outlined email-icon">mail</span>
+          <span>{{ email }}</span>
+          <button class="btn-icon" (click)="settings.removeEmail(email)">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      } @empty {
+        <p class="empty">Nenhum email cadastrado.</p>
+      }
+    </div>
+  </div>
+</div>

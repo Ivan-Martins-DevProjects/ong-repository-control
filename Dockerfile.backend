@@ -1,0 +1,9 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /app
+
+EXPOSE 5045
+
+ENV ASPNETCORE_URLS=http://+:5045
+ENV ASPNETCORE_ENVIRONMENT=Development
+
+ENTRYPOINT ["dotnet", "watch", "run", "--no-launch-profile", "--project", "backend/backend.csproj"]

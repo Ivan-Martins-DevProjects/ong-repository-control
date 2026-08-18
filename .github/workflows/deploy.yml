@@ -1,0 +1,37 @@
+name: Deploy via Webhook
+
+# Aciona o endpoint de deploy sempre que houver um pull request na main.
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Notificar endpoint de deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chamar endpoint de deploy
+        env:
+          WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH: ${{ github.head_ref }}
+          COMMIT: ${{ github.event.pull_request.head.sha }}
+        run: |
+          : "${WEBHOOK_URL:?Defina o secret DEPLOY_WEBHOOK_URL}"
+          : "${DEPLOY_TOKEN:?Defina o secret DEPLOY_TOKEN}"
+          curl --fail --silent --show-error \
+            -X POST "$WEBHOOK_URL" \
+            -H "Authorization: Bearer $DEPLOY_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data-binary @- <<EOF
+          {
+            "branch": "$BRANCH",
+            "repository": "$REPOSITORY",
+            "commit": "$COMMIT"
+          }
+          EOF

@@ -1,0 +1,65 @@
+<div class="page">
+  <h1>Categorias</h1>
+  <p class="subtitle">Gerencie as categorias que identificam os tipos de produto.</p>
+
+  @if (error()) {
+    <div class="alert-error">{{ error() }}</div>
+  }
+
+  <div class="card">
+    <div class="add-row">
+      <input [(ngModel)]="newCategory" (keyup.enter)="addCategory()" placeholder="Nova categoria..." />
+      <button class="btn btn-primary" (click)="addCategory()" [disabled]="!newCategory.trim() || saving()">
+        <span class="material-symbols-outlined">add</span> Adicionar
+      </button>
+    </div>
+    @if (loading()) {
+      <p class="empty">Carregando...</p>
+    } @else {
+      <div class="cat-list">
+        @for (cat of categories(); track cat.id) {
+          <div class="cat-item">
+            <span class="material-symbols-outlined cat-icon">category</span>
+            <span class="cat-name">{{ cat.name }}</span>
+            <span class="cat-unit">{{ cat.unit }}</span>
+            <button class="btn-icon" title="Editar categoria" (click)="openEdit(cat)">
+              <span class="material-symbols-outlined">edit</span>
+            </button>
+            <button class="btn-icon" title="Excluir categoria" (click)="requestDelete(cat)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        } @empty {
+          <p class="empty">Nenhuma categoria cadastrada.</p>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+@if (editing(); as cat) {
+  <div class="overlay" (click)="closeEdit()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>Editar Categoria</h2>
+      <div class="field"><label>Nome</label><input [(ngModel)]="editingName" (keyup.enter)="saveEdit()" /></div>
+      <div class="modal-actions">
+        <button class="btn" (click)="closeEdit()">Cancelar</button>
+        <button class="btn btn-primary" (click)="saveEdit()" [disabled]="!editingName.trim() || saving()">{{ saving() ? 'Salvando...' : 'Salvar' }}</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (deleting(); as cat) {
+  <div class="overlay" (click)="closeDelete()">
+    <div class="modal confirm-modal" (click)="$event.stopPropagation()">
+      <span class="material-symbols-outlined confirm-icon">warning</span>
+      <h2>Excluir categoria?</h2>
+      <p>A categoria <strong>{{ cat.name }}</strong> será excluída e os tipos de produto que a utilizam ficarão <strong>sem categoria</strong>.</p>
+      <div class="modal-actions">
+        <button class="btn" (click)="closeDelete()">Cancelar</button>
+        <button class="btn btn-danger" (click)="doDelete(cat)" [disabled]="deletingBusy()">{{ deletingBusy() ? 'Excluindo...' : 'Excluir' }}</button>
+      </div>
+    </div>
+  </div>
+}

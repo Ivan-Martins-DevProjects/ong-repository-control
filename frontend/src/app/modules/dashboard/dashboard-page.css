@@ -1,0 +1,43 @@
+:host { display: contents; }
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; }
+.stat-card { display: flex; align-items: center; gap: 0.75rem; background: #1e293b; border-radius: 12px; padding: 1rem 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.2); border: 1px solid #334155; }
+.stat-icon { width: 2.5rem; height: 2.5rem; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.stat-icon.blue { background: rgba(59,130,246,0.15); color: #60a5fa; }
+.stat-icon.green { background: rgba(34,197,94,0.15); color: #4ade80; }
+.stat-icon.red { background: rgba(239,68,68,0.15); color: #f87171; }
+.stat-icon.orange { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.stat-value { display: block; font-size: 1.25rem; font-weight: 700; color: #f1f5f9; line-height: 1.2; }
+.stat-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; }
+.charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; min-width: 0; }
+.chart-card { background: #1e293b; border-radius: 12px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.2); border: 1px solid #334155; min-width: 0; }
+.chart-card h2 { margin: 0 0 1rem; font-size: 0.9375rem; color: #cbd5e1; font-weight: 600; }
+.chart-wrapper { position: relative; height: 240px; width: 100%; overflow: hidden; }
+h2 { font-size: 1.125rem; color: #f1f5f9; margin-bottom: 0.75rem; }
+
+.cards { display: flex; flex-direction: column; gap: 0.5rem; }
+.movement-item { background: #1e293b; border-radius: 10px; padding: 0.75rem; border: 1px solid #334155; display: flex; align-items: center; gap: 0.75rem; }
+.movement-icon { width: 2rem; height: 2rem; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.movement-icon.entry { background: rgba(34,197,94,0.15); color: #4ade80; }
+.movement-icon.exit { background: rgba(239,68,68,0.15); color: #f87171; }
+.movement-body { flex: 1; min-width: 0; }
+.movement-title { font-size: 0.875rem; font-weight: 600; color: #f1f5f9; }
+.movement-desc { font-size: 0.75rem; color: #94a3b8; margin-top: 0.125rem; }
+.movement-meta-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem; }
+.mov-badge { display: inline-block; padding: 0.0625rem 0.5rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; }
+.mov-badge.process { background: rgba(139,92,246,0.15); color: #a78bfa; }
+.mov-badge.item { background: rgba(148,163,184,0.15); color: #cbd5e1; }
+.mov-date { font-size: 0.75rem; font-weight: 600; color: #e2e8f0; }
+.movement-qty { font-size: 0.875rem; font-weight: 700; text-align: right; white-space: nowrap; }
+.movement-qty.entry { color: #4ade80; }
+.movement-qty.exit { color: #f87171; }
+
+.empty { text-align: center; color: #64748b; padding: 2rem !important; }
+
+@media (max-width: 768px) {
+  .charts-row { grid-template-columns: 1fr; }
+  .summary { grid-template-columns: 1fr 1fr; }
+  .stat-card { padding: 0.75rem; }
+  .stat-value { font-size: 1rem; }
+  .stat-icon { width: 2rem; height: 2rem; }
+  .chart-wrapper { height: 200px; }
+}

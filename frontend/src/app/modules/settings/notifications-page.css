@@ -1,0 +1,21 @@
+:host { display: contents; }
+.subtitle { margin: -0.5rem 0 0; font-size: 0.875rem; color: #64748b; }
+.desc { font-size: 0.8125rem; color: #64748b; margin-bottom: 0.75rem; }
+h2 { font-size: 1rem; color: #f1f5f9; margin: 0 0 0.75rem; font-weight: 600; }
+.card + .card { margin-top: 0.75rem; }
+.checks { display: flex; flex-direction: column; gap: 0.625rem; }
+.check { display: flex; align-items: center; gap: 0.625rem; font-size: 0.875rem; color: #cbd5e1; cursor: pointer; position: relative; padding-left: 0.25rem; }
+.check input { position: absolute; opacity: 0; width: 0; height: 0; }
+.check-mark { width: 1.125rem; height: 1.125rem; border: 2px solid #475569; border-radius: 4px; transition: all 0.15s; flex-shrink: 0; position: relative; background: #0f172a; }
+.check input:checked + .check-mark { background: #3b82f6; border-color: #3b82f6; }
+.check input:checked + .check-mark::after { content: ''; position: absolute; left: 4px; top: 1px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.add-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.add-row input { flex: 1; max-width: 320px; }
+.email-list { display: flex; flex-direction: column; }
+.email-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0; border-bottom: 1px solid #334155; }
+.email-item:last-child { border-bottom: none; }
+.email-icon { color: #64748b; font-size: 1.25rem; }
+.email-item span:not(.material-symbols-outlined) { flex: 1; font-size: 0.875rem; color: #cbd5e1; }
+.email-item .btn-icon { margin-left: auto; }
+.email-item .btn-icon:hover { color: #f87171; }
+.empty { text-align: center; color: #64748b; padding: 1.5rem 0; font-size: 0.875rem; }

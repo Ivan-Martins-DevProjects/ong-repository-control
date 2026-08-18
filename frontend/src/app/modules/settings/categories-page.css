@@ -1,0 +1,26 @@
+:host { display: contents; }
+.subtitle { margin: -0.5rem 0 0; font-size: 0.875rem; color: #64748b; }
+.add-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.add-row input { flex: 1; }
+.cat-list { display: flex; flex-direction: column; }
+.cat-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #334155; }
+.cat-item:last-child { border-bottom: none; }
+.cat-icon { color: #64748b; font-size: 1.25rem; }
+.cat-name { flex: 1; font-size: 0.875rem; color: #cbd5e1; }
+.cat-unit { font-size: 0.75rem; color: #64748b; font-style: italic; }
+.cat-item .btn-icon:hover { color: #f87171; }
+.cat-item .btn-icon:first-of-type:hover { color: #60a5fa; }
+.empty { text-align: center; color: #64748b; padding: 1.5rem 0; font-size: 0.875rem; }
+.alert-error { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.4); color: #fca5a5; border-radius: 10px; padding: 0.625rem 0.875rem; font-size: 0.8125rem; margin-bottom: 0.75rem; }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); padding: 1rem; }
+.modal { background: #1e293b; border-radius: 16px; padding: 1.25rem; width: 100%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid #334155; max-height: 90vh; overflow-y: auto; }
+.modal h2 { margin: 0 0 0.75rem; font-size: 1.125rem; color: #f1f5f9; }
+.confirm-modal { text-align: center; }
+.confirm-icon { font-size: 2.5rem; color: #f59e0b; margin-bottom: 0.5rem; }
+.confirm-modal p { margin: 0 0 0.75rem; font-size: 0.875rem; color: #94a3b8; }
+.confirm-modal strong { color: #e2e8f0; }
+.field { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.75rem; }
+.field label { font-size: 0.75rem; color: #94a3b8; font-weight: 500; }
+.field input { padding: 0.5rem 0.75rem; border: 1px solid #475569; border-radius: 8px; font-size: 0.875rem; background: #0f172a; color: #e2e8f0; width: 100%; }
+.modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem; }
+.confirm-modal .modal-actions { justify-content: center; }

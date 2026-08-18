@@ -1,0 +1,66 @@
+@if (!expanded()) {
+  <button class="filter-toggle" (click)="toggle()">
+    <span class="material-symbols-outlined">filter_alt</span>
+    <span>Filtros</span>
+    @if (activeCount() > 0) {
+      <span class="filter-badge">{{ activeCount() }}</span>
+    }
+  </button>
+}
+
+@if (open()) {
+  <div class="filter-panel" [class.filter-panel--inline]="expanded()">
+    <div class="filter-body">
+      @for (row of rows(); track $index) {
+        @if (row.length === 1) {
+          @if (row[0].type === 'text') {
+            <div class="fg">
+              <label class="fl">{{ row[0].label }}</label>
+              <input class="fi" [ngModel]="getVal(row[0].key)" (ngModelChange)="setVal(row[0].key, $event)" placeholder="{{ row[0].label }}..." />
+            </div>
+          }
+          @if (row[0].type === 'date') {
+            <div class="fg-row">
+              <div class="fg">
+                <label class="fl">{{ row[0].label }} (de)</label>
+                <input class="fi" type="date" [ngModel]="getVal(row[0].key + 'Start')" (ngModelChange)="setVal(row[0].key + 'Start', $event)" />
+              </div>
+              <span class="fg-sep">até</span>
+              <div class="fg">
+                <label class="fl">{{ row[0].label }} (até)</label>
+                <input class="fi" type="date" [ngModel]="getVal(row[0].key + 'End')" (ngModelChange)="setVal(row[0].key + 'End', $event)" />
+              </div>
+            </div>
+          }
+          @if (row[0].type === 'select') {
+            <div class="fg">
+              <label class="fl">{{ row[0].label }}</label>
+              <select class="fi" [ngModel]="getVal(row[0].key)" (ngModelChange)="setVal(row[0].key, $event)">
+                @for (opt of row[0].options || []; track opt.value) {
+                  <option [value]="opt.value">{{ opt.label }}</option>
+                }
+              </select>
+            </div>
+          }
+        } @else {
+          <div class="fg-row">
+            @for (f of row; track f.key) {
+              <div class="fg">
+                <label class="fl">{{ f.label }}</label>
+                <select class="fi" [ngModel]="getVal(f.key)" (ngModelChange)="setVal(f.key, $event)">
+                  @for (opt of f.options || []; track opt.value) {
+                    <option [value]="opt.value">{{ opt.label }}</option>
+                  }
+                </select>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+    <div class="filter-actions">
+      <button class="btn btn-sm" (click)="doClear()">Limpar</button>
+      <button class="btn btn-sm btn-primary" (click)="doApply()">Aplicar</button>
+    </div>
+  </div>
+}

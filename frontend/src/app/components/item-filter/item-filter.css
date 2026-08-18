@@ -1,0 +1,32 @@
+:host { display: contents; }
+
+.filter-toggle {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  padding: 0.375rem 0.75rem; border: 1px solid #334155; border-radius: 8px;
+  background: #1e293b; color: #94a3b8; font-size: 0.8125rem; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+}
+.filter-toggle:hover { border-color: #60a5fa; color: #e2e8f0; }
+.filter-toggle .material-symbols-outlined { font-size: 1.125rem; }
+.filter-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.25rem; height: 1.25rem; border-radius: 9999px;
+  background: #3b82f6; color: #fff; font-size: 0.6875rem; font-weight: 700;
+}
+
+.filter-panel {
+  display: flex; flex-direction: column; gap: 0.75rem;
+  background: #1e293b; border-radius: 12px; padding: 1rem;
+  border: 1px solid #334155;
+}
+.filter-panel--inline { border: 1px solid #334155; position: static; width: auto; box-shadow: none; }
+
+.filter-body { display: flex; flex-direction: column; gap: 0.625rem; }
+.fg { display: flex; flex-direction: column; gap: 0.25rem; flex: 1; }
+.fl { font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
+.fi { padding: 0.5rem 0.75rem; border: 1px solid #475569; border-radius: 8px; font-size: 0.875rem; background: #0f172a; color: #e2e8f0; width: 100%; transition: border-color 0.15s; }
+.fi:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); outline: none; }
+.fi::placeholder { color: #475569; }
+.fg-row { display: flex; align-items: flex-end; gap: 0.625rem; }
+.fg-sep { font-size: 0.8125rem; color: #64748b; padding-bottom: 0.625rem; }
+.filter-actions { display: flex; gap: 0.375rem; justify-content: flex-end; border-top: 1px solid #334155; padding-top: 0.75rem; }

@@ -1,0 +1,48 @@
+<aside class="sidebar" [class.open]="open()">
+  <div class="logo">
+    <span class="material-symbols-outlined logo-icon">inventory_2</span>
+    <span class="logo-text">ONG Estoque</span>
+  </div>
+  <nav>
+    <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-item" (click)="navigate.emit()">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span>Dashboard</span>
+    </a>
+    <a routerLink="/estoque" routerLinkActive="active" class="nav-item" (click)="navigate.emit()">
+      <span class="material-symbols-outlined">inventory</span>
+      <span>Estoque</span>
+    </a>
+    <a routerLink="/historico" routerLinkActive="active" class="nav-item" (click)="navigate.emit()">
+      <span class="material-symbols-outlined">history</span>
+      <span>Histórico</span>
+    </a>
+    <div class="nav-group">
+      <div class="nav-group-header">
+        <span class="material-symbols-outlined">settings</span>
+        <span>Configurações</span>
+      </div>
+      <div class="nav-group-items">
+        <a routerLink="/configuracoes/categorias" routerLinkActive="active" class="nav-item sub" (click)="navigate.emit()">
+          <span class="material-symbols-outlined">category</span>
+          <span>Categorias</span>
+        </a>
+        <a routerLink="/configuracoes/notificacoes" routerLinkActive="active" class="nav-item sub" (click)="navigate.emit()">
+          <span class="material-symbols-outlined">notifications</span>
+          <span>Notificações</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    @if (user(); as u) {
+      <div class="user-info">
+        <span class="user-name">{{ u.name }}</span>
+        <span class="user-email">{{ u.email }}</span>
+      </div>
+    }
+    <button class="btn-logout" (click)="doLogout()">
+      <span class="material-symbols-outlined">logout</span>
+      <span>Sair</span>
+    </button>
+  </div>
+</aside>
