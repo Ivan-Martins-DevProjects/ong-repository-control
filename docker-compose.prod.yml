@@ -8,7 +8,12 @@
 # Entrada única: porta HOST_FRONTEND (padrão 8080) -> nginx -> { SPA + /api }
 # O frontend e a API ficam na MESMA origem, então o erro de allowedHosts do
 # ng serve nem chega a existir (em prod o Angular não roda no dev server).
+#
+# Project name próprio (repositorycontrol-prod) para não conflitar com o
+# compose de desenvolvimento (mesmo diretório, mesmo service/volume names).
 # ============================================================================
+
+name: repositorycontrol-prod
 
 services:
   postgres:
@@ -16,8 +21,8 @@ services:
     container_name: repositorycontrol-prod-postgres
     restart: unless-stopped
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - postgres_data_prod:/var/lib/postgresql/data
+      - ./postgres/dump.sql:/docker-entrypoint-initdb.d/init.sql:ro
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?Defina POSTGRES_USER no arquivo .env}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env}
@@ -55,4 +60,4 @@ services:
       - "${HOST_FRONTEND:-8080}:80"
 
 volumes:
-  postgres_data:
+  postgres_data_prod:
