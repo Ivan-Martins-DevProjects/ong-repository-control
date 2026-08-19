@@ -25,6 +25,7 @@ jobs:
           : "${WEBHOOK_URL:?Defina o secret DEPLOY_WEBHOOK_URL}"
           : "${DEPLOY_TOKEN:?Defina o secret DEPLOY_TOKEN}"
           curl --fail --silent --show-error \
+            --max-time 300 \
             -X POST "$WEBHOOK_URL" \
             -H "Authorization: Bearer $DEPLOY_TOKEN" \
             -H "Content-Type: application/json" \

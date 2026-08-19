@@ -57,7 +57,11 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.js"
+            "proxyConfig": "proxy.conf.js",
+            "allowedHosts": [
+              "repository-control.ivandev.cloud",
+              "localhost"
+            ]
           },
           "configurations": {
             "production": {

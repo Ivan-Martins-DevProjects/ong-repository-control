@@ -1,0 +1,63 @@
+# ============================================================================
+# Produção — repositorycontrol
+#
+# Uso:
+#   cp .env.example .env   # e troque POSTGRES_PASSWORD e JWT_SECRET
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# Entrada única: porta HOST_FRONTEND (padrão 8080) -> nginx -> { SPA + /api }
+# O frontend e a API ficam na MESMA origem, então o erro de allowedHosts do
+# ng serve nem chega a existir (em prod o Angular não roda no dev server).
+#
+# Project name próprio (repositorycontrol-prod) para não conflitar com o
+# compose de desenvolvimento (mesmo diretório, mesmo service/volume names).
+# ============================================================================
+
+name: repositorycontrol-prod
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: repositorycontrol-prod-postgres
+    restart: unless-stopped
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+      - ./postgres/dump.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Defina POSTGRES_USER no arquivo .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env}
+      POSTGRES_DB: ${POSTGRES_DB:?Defina POSTGRES_DB no arquivo .env}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend.prod
+    container_name: repositorycontrol-prod-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_URLS: http://+:5045
+      ASPNETCORE_ENVIRONMENT: Production
+      Jwt__SecretKey: ${JWT_SECRET:?Defina JWT_SECRET no arquivo .env}
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${POSTGRES_DB:?};Username=${POSTGRES_USER:?};Password=${POSTGRES_PASSWORD:?}
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend.prod
+    container_name: repositorycontrol-prod-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${HOST_FRONTEND:-8080}:80"
+
+volumes:
+  postgres_data_prod:
