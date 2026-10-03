@@ -42,7 +42,12 @@ func (s *AuthService) CreateUser(user dto.CreateUserRequest) (token.Token, error
 				fields = append(fields, e.Field())
 			}
 
-			fullMessage := fmt.Sprintf("Os campos: %v estão inválidos", strings.Join(fields, " e "))
+			var fullMessage string
+			if len(fields) > 1 {
+				fullMessage = fmt.Sprintf("Os campos: %v estão inválidos", strings.Join(fields, ", "))
+			} else {
+				fullMessage = fmt.Sprintf("O campo %v é inválido", strings.Join(fields, " e "))
+			}
 			return nil, apperror.BadRequest(fullMessage, err)
 		}
 		return nil, apperror.BadRequest("Erro de validação desconhecido", err)

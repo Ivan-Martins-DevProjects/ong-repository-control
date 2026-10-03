@@ -6,4 +6,5 @@ type Token interface {
 	generateClaims() jwt.MapClaims
 	GenerateToken(secret []byte) error
 	GetValue() string
+	GetUserID() string // Test Function
 }

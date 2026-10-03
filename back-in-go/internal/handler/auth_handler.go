@@ -64,11 +64,13 @@ func (h *AuthHandler) CreateUser(c *gin.Context) {
 			"Dados incorretos",
 			err,
 		))
+		return
 	}
 
 	token, err := h.authService.CreateUser(request)
 	if err != nil {
 		c.Error(err)
+		return
 	}
 
 	c.SetCookie(

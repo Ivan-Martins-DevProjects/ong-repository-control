@@ -119,7 +119,7 @@ func TestAuthService_CreateUser(t *testing.T) {
 				Password: userTestDefault.Password,
 			},
 			wantErr:         true,
-			expectedMessage: "O campo 'Email' é inválido",
+			expectedMessage: "O campo Email é inválido",
 		},
 		{
 			name:     "Nome muito curto (menos de 3 caracteres)",
@@ -131,7 +131,7 @@ func TestAuthService_CreateUser(t *testing.T) {
 				Password: userTestDefault.Password,
 			},
 			wantErr:         true,
-			expectedMessage: "O campo 'Name' é inválido",
+			expectedMessage: "O campo Name é inválido",
 		},
 		{
 			name:     "Nome muito longo (mais de 50 caracteres)",
@@ -143,7 +143,7 @@ func TestAuthService_CreateUser(t *testing.T) {
 				Password: userTestDefault.Password,
 			},
 			wantErr:         true,
-			expectedMessage: "O campo 'Name' é inválido",
+			expectedMessage: "O campo Name é inválido",
 		},
 		{
 			name:     "Email com formato inválido",
@@ -155,7 +155,7 @@ func TestAuthService_CreateUser(t *testing.T) {
 				Password: userTestDefault.Password,
 			},
 			wantErr:         true,
-			expectedMessage: "O campo 'Email' é inválido",
+			expectedMessage: "O campo Email é inválido",
 		},
 		{
 			name:     "Senha muito curta (menos de 8 caracteres)",
@@ -167,7 +167,7 @@ func TestAuthService_CreateUser(t *testing.T) {
 				Password: "123",
 			},
 			wantErr:         true,
-			expectedMessage: "O campo 'Password' é inválido",
+			expectedMessage: "O campo Password é inválido",
 		},
 		{
 			name:     "Nome totalmente vazio",
@@ -179,7 +179,7 @@ func TestAuthService_CreateUser(t *testing.T) {
 				Password: userTestDefault.Password,
 			},
 			wantErr:         true,
-			expectedMessage: "O campo 'Name' é inválido",
+			expectedMessage: "O campo Name é inválido",
 		},
 		{
 			name:     "Todos os campos obrigatórios vazios",
@@ -191,13 +191,13 @@ func TestAuthService_CreateUser(t *testing.T) {
 				Password: "",
 			},
 			wantErr:         true,
-			expectedMessage: "O campo 'Name' é inválido",
+			expectedMessage: "Os campos: Name, Email, Password estão inválidos",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := service.NewAuthService(tt.userRepo, tt.secret)
-			id, gotErr := s.CreateUser(tt.user)
+			token, gotErr := s.CreateUser(tt.user)
 			if gotErr != nil {
 				if !tt.wantErr {
 					t.Errorf("Erro ao criar usuário: %v", gotErr)
@@ -215,7 +215,7 @@ func TestAuthService_CreateUser(t *testing.T) {
 				return
 			}
 
-			_, err := uuid.Parse(id)
+			_, err := uuid.Parse(token.GetUserID())
 			if err != nil {
 				t.Error("Erro ao realizar o parse do UUID retornado pelo banco de dados")
 			}

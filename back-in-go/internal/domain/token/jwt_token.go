@@ -22,6 +22,10 @@ func NewJwtToken(userID, method string, exp int64) *JwtToken {
 	}
 }
 
+func (j *JwtToken) GetUserID() string {
+	return j.UserID
+}
+
 func (j *JwtToken) GetValue() string {
 	return j.Value
 }
