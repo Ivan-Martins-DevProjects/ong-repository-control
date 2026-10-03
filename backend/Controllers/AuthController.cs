@@ -45,6 +45,40 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+    {
+        try
+        {
+            var response = await _authService.RegisterAsync(dto);
+
+            var token = _authService.GenerateToken(
+                response.Email,
+                response.Name,
+                DateTime.UtcNow.AddHours(8)
+            );
+
+            Response.Cookies.Append(
+                "auth_token",
+                token,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false,
+                    SameSite = SameSiteMode.Lax,
+                    Expires = response.ExpiresAt,
+                    Path = "/",
+                }
+            );
+
+            return Ok(response);
+        }
+        catch (ApplicationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+    }
+
     [HttpPost("logout")]
     public IActionResult Logout()
     {

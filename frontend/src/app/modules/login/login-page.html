@@ -1,28 +1,181 @@
-<div class="login-wrapper">
-  <div class="login-card">
-    <div class="login-header">
-      <span class="material-symbols-outlined login-icon">inventory_2</span>
-      <h1>ONG Estoque</h1>
-      <p>Acesse sua conta</p>
+<div class="login-layout">
+  <aside class="brand" aria-hidden="true">
+    <div class="brand__glow brand__glow--top"></div>
+    <div class="brand__glow brand__glow--bottom"></div>
+    <span class="brand__watermark">S</span>
+    <div class="brand__content">
+      <span class="material-symbols-outlined brand__icon">warehouse</span>
+      <h1 class="brand__name">Storager</h1>
+      <p class="brand__tagline">Gerencie os recursos da sua organização com eficiência e transparência.</p>
     </div>
-    <form #f="ngForm" (ngSubmit)="doLogin()">
-      <div class="field">
-        <label for="email">Email</label>
-        <input id="email" type="email" name="email" [(ngModel)]="email" #emailField="ngModel" required placeholder="seu@email.com" />
+  </aside>
+
+  <main class="panel">
+    <div class="card">
+      <div class="card__header">
+        <h2>{{ isLoginMode() ? 'Bem-vindo de volta' : 'Criar sua conta' }}</h2>
+        <p>{{ isLoginMode() ? 'Entre com suas credenciais para acessar o sistema.' : 'Preencha os dados abaixo para começar.' }}</p>
       </div>
-      <div class="field">
-        <label for="password">Senha</label>
-        <input id="password" type="password" name="password" [(ngModel)]="password" #passwordField="ngModel" required placeholder="••••••••" />
-      </div>
-      @if (error()) {
-        <p class="error">{{ errorMessage() }}</p>
+
+      @if (isLoginMode()) {
+        <form #loginForm="ngForm" (ngSubmit)="doLogin()" class="form" aria-label="Formulário de login" novalidate>
+          <div class="field">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              [(ngModel)]="email"
+              #emailField="ngModel"
+              required
+              placeholder="seu@email.com"
+              autocomplete="email"
+              [attr.aria-invalid]="emailField.invalid && emailField.touched ? true : null"
+              [attr.aria-describedby]="emailField.invalid && emailField.touched ? 'email-error' : null"
+            />
+            @if (emailField.invalid && emailField.touched) {
+              <span id="email-error" class="field__error" role="alert">Email é obrigatório.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="password">Senha</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              [(ngModel)]="password"
+              #passwordField="ngModel"
+              required
+              placeholder="Sua senha"
+              autocomplete="current-password"
+              [attr.aria-invalid]="passwordField.invalid && passwordField.touched ? true : null"
+              [attr.aria-describedby]="passwordField.invalid && passwordField.touched ? 'password-error' : null"
+            />
+            @if (passwordField.invalid && passwordField.touched) {
+              <span id="password-error" class="field__error" role="alert">Senha é obrigatória.</span>
+            }
+          </div>
+
+          @if (error()) {
+            <div class="error" role="alert" aria-live="assertive">
+              <span class="material-symbols-outlined error__icon" aria-hidden="true">error</span>
+              <span>{{ errorMessage() }}</span>
+            </div>
+          }
+
+          <button
+            type="submit"
+            class="btn"
+            [disabled]="loginForm.invalid || loading()"
+            [attr.aria-busy]="loading() || null"
+          >
+            @if (loading()) {
+              <span class="spinner" aria-hidden="true"></span>
+            }
+            {{ loading() ? 'Entrando...' : 'Entrar' }}
+          </button>
+        </form>
+
+        <p class="toggle">
+          Não tem uma conta?
+          <button
+            type="button"
+            class="toggle__link"
+            (click)="toggleMode()"
+            [attr.aria-label]="isLoginMode() ? 'Criar uma nova conta' : 'Fazer login com conta existente'"
+          >Criar conta</button>
+        </p>
+      } @else {
+        <form #registerForm="ngForm" (ngSubmit)="doRegister()" class="form" aria-label="Formulário de cadastro" novalidate>
+          <div class="field">
+            <label for="name">Nome</label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              [(ngModel)]="name"
+              #nameField="ngModel"
+              required
+              placeholder="Seu nome completo"
+              autocomplete="name"
+              [attr.aria-invalid]="nameField.invalid && nameField.touched ? true : null"
+              [attr.aria-describedby]="nameField.invalid && nameField.touched ? 'name-error' : null"
+            />
+            @if (nameField.invalid && nameField.touched) {
+              <span id="name-error" class="field__error" role="alert">Nome é obrigatório.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="reg-email">Email</label>
+            <input
+              id="reg-email"
+              type="email"
+              name="email"
+              [(ngModel)]="email"
+              #regEmailField="ngModel"
+              required
+              placeholder="seu@email.com"
+              autocomplete="email"
+              [attr.aria-invalid]="regEmailField.invalid && regEmailField.touched ? true : null"
+              [attr.aria-describedby]="regEmailField.invalid && regEmailField.touched ? 'reg-email-error' : null"
+            />
+            @if (regEmailField.invalid && regEmailField.touched) {
+              <span id="reg-email-error" class="field__error" role="alert">Email é obrigatório.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="reg-password">Senha</label>
+            <input
+              id="reg-password"
+              type="password"
+              name="password"
+              [(ngModel)]="password"
+              #regPasswordField="ngModel"
+              required
+              minlength="6"
+              placeholder="Mínimo 6 caracteres"
+              autocomplete="new-password"
+              [attr.aria-invalid]="regPasswordField.invalid && regPasswordField.touched ? true : null"
+              [attr.aria-describedby]="regPasswordField.invalid && regPasswordField.touched ? 'reg-password-error' : null"
+            />
+            @if (regPasswordField.invalid && regPasswordField.touched) {
+              <span id="reg-password-error" class="field__error" role="alert">Senha deve ter no mínimo 6 caracteres.</span>
+            }
+          </div>
+
+          @if (error()) {
+            <div class="error" role="alert" aria-live="assertive">
+              <span class="material-symbols-outlined error__icon" aria-hidden="true">error</span>
+              <span>{{ errorMessage() }}</span>
+            </div>
+          }
+
+          <button
+            type="submit"
+            class="btn"
+            [disabled]="registerForm.invalid || loading()"
+            [attr.aria-busy]="loading() || null"
+          >
+            @if (loading()) {
+              <span class="spinner" aria-hidden="true"></span>
+            }
+            {{ loading() ? 'Criando conta...' : 'Criar conta' }}
+          </button>
+        </form>
+
+        <p class="toggle">
+          Já tem uma conta?
+          <button
+            type="button"
+            class="toggle__link"
+            (click)="toggleMode()"
+            [attr.aria-label]="isLoginMode() ? 'Criar uma nova conta' : 'Fazer login com conta existente'"
+          >Entrar</button>
+        </p>
       }
-      <button type="submit" class="btn btn-primary btn-full" [disabled]="f.invalid || loading()">
-        @if (loading()) {
-          <span class="spinner"></span>
-        }
-        {{ loading() ? 'Entrando...' : 'Entrar' }}
-      </button>
-    </form>
-  </div>
+    </div>
+  </main>
 </div>

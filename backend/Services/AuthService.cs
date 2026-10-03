@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using backend.DTOs;
+using backend.Models;
 using backend.Repository;
 using Microsoft.IdentityModel.Tokens;
 
@@ -38,6 +39,40 @@ public class AuthService
             Name = user.Name,
             ExpiresAt = expiresAt,
         };
+    }
+
+    public async Task<LoginResponseDto> RegisterAsync(RegisterDto dto)
+    {
+        var salt = GenerateSalt();
+        var hash = HashPassword(dto.Password, salt);
+
+        var user = new User
+        {
+            Name = dto.Name,
+            Email = dto.Email,
+            PasswordHash = hash,
+            PasswordSalt = salt,
+            Role = "admin",
+            CreatedAt = DateTime.UtcNow,
+        };
+
+        await _userRepo.CreateAsync(user);
+
+        var expiresAt = DateTime.UtcNow.AddHours(8);
+        return new LoginResponseDto
+        {
+            Email = user.Email,
+            Name = user.Name,
+            ExpiresAt = expiresAt,
+        };
+    }
+
+    private static string GenerateSalt()
+    {
+        var bytes = new byte[32];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(bytes);
+        return Convert.ToBase64String(bytes);
     }
 
     public TokenValidationParameters GetValidationParameters()

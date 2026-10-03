@@ -1,62 +1,98 @@
 <div class="page">
-  <h1>Dashboard</h1>
+  <header class="dash-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="dash-header__sub">Visão geral do seu estoque</p>
+    </div>
+  </header>
 
-  <div class="summary">
-    <div class="stat-card">
-      <span class="stat-icon blue"><span class="material-symbols-outlined">package_2</span></span>
-      <div><span class="stat-value">{{ totalTypes() }}</span><span class="stat-label">Itens</span></div>
+  <div class="stats" role="list" aria-label="Resumo do estoque">
+    <div class="stat" role="listitem">
+      <div class="stat__icon stat__icon--forest" aria-hidden="true">
+        <span class="material-symbols-outlined">package_2</span>
+      </div>
+      <div class="stat__body">
+        <span class="stat__value">{{ totalTypes() }}</span>
+        <span class="stat__label">Itens cadastrados</span>
+      </div>
     </div>
-    <div class="stat-card">
-      <span class="stat-icon green"><span class="material-symbols-outlined">inventory</span></span>
-      <div><span class="stat-value">{{ totalUnits() }}</span><span class="stat-label">Unidades</span></div>
+    <div class="stat" role="listitem">
+      <div class="stat__icon stat__icon--terra" aria-hidden="true">
+        <span class="material-symbols-outlined">inventory</span>
+      </div>
+      <div class="stat__body">
+        <span class="stat__value">{{ totalUnits() }}</span>
+        <span class="stat__label">Unidades em estoque</span>
+      </div>
     </div>
-    <div class="stat-card">
-      <span class="stat-icon orange"><span class="material-symbols-outlined">calendar_month</span></span>
-      <div><span class="stat-value">{{ expiringSoon() }}</span><span class="stat-label">Vencem em 30d</span></div>
+    <div class="stat" role="listitem">
+      <div class="stat__icon stat__icon--warning" aria-hidden="true">
+        <span class="material-symbols-outlined">schedule</span>
+      </div>
+      <div class="stat__body">
+        <span class="stat__value">{{ expiringSoon() }}</span>
+        <span class="stat__label">Vencem em 30 dias</span>
+      </div>
     </div>
   </div>
 
   @if (loading()) {
-    <p class="empty">Carregando...</p>
+    <div class="empty" role="status" aria-live="polite">
+      <span class="material-symbols-outlined empty__icon" aria-hidden="true">hourglass_empty</span>
+      <p>Carregando dados...</p>
+    </div>
   }
 
-  <div class="charts-row">
+  <div class="charts">
     <div class="chart-card">
-      <h2>Movimentação Mensal</h2>
-      <div class="chart-wrapper"><canvas #lineCanvas></canvas></div>
+      <div class="chart-card__header">
+        <h2>Movimentação Mensal</h2>
+      </div>
+      <div class="chart-card__body" role="img" aria-label="Gráfico de linhas mostrando entradas e saídas mensais">
+        <canvas #lineCanvas></canvas>
+      </div>
     </div>
     <div class="chart-card">
-      <h2>Total Entradas vs Saídas</h2>
-      <div class="chart-wrapper"><canvas #pieCanvas></canvas></div>
+      <div class="chart-card__header">
+        <h2>Entradas vs Saídas</h2>
+      </div>
+      <div class="chart-card__body" role="img" aria-label="Gráfico de rosca comparando total de entradas e saídas">
+        <canvas #pieCanvas></canvas>
+      </div>
     </div>
   </div>
 
-  <section>
-    <h2>Últimas movimentações</h2>
-    <div class="cards">
+  <section class="activity" aria-labelledby="recent-heading">
+    <div class="activity__header">
+      <h2 id="recent-heading">Últimas movimentações</h2>
+    </div>
+    <div class="activity__list">
       @for (m of recentMovements(); track m.id) {
-        <div class="movement-item">
-          <div class="movement-icon" [class.entry]="m.type === 'entry'" [class.exit]="m.type === 'exit'">
-            <span class="material-symbols-outlined">{{ m.type === 'entry' ? 'add_circle' : 'remove_circle' }}</span>
+        <div class="activity-item" role="listitem">
+          <div class="activity-item__icon" [class.activity-item__icon--entry]="m.type === 'entry'" [class.activity-item__icon--exit]="m.type === 'exit'" aria-hidden="true">
+            <span class="material-symbols-outlined">{{ m.type === 'entry' ? 'arrow_downward' : 'arrow_upward' }}</span>
           </div>
-          <div class="movement-body">
-            <div class="movement-title">{{ m.itemName }}</div>
+          <div class="activity-item__body">
+            <div class="activity-item__title">{{ m.itemName }}</div>
             @if (m.description) {
-              <div class="movement-desc">{{ m.description }}</div>
+              <div class="activity-item__desc">{{ m.description }}</div>
             }
-            <div class="movement-meta-row">
-              <span class="mov-badge" [class.process]="m.source === 'process'" [class.item]="m.source !== 'process'">
-                {{ m.source === 'process' ? 'Processo' : 'Item' }}
-              </span>
-              <span class="mov-date">{{ m.date | date:'dd/MM/yyyy' }}</span>
-            </div>
           </div>
-          <div class="movement-qty" [class.entry]="m.type === 'entry'" [class.exit]="m.type === 'exit'">
+          <div class="activity-item__meta">
+            <span class="activity-item__badge" [class.activity-item__badge--process]="m.source === 'process'">
+              {{ m.source === 'process' ? 'Processo' : 'Item' }}
+            </span>
+            <span class="activity-item__date">{{ m.date | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="activity-item__qty" [class.activity-item__qty--entry]="m.type === 'entry'" [class.activity-item__qty--exit]="m.type === 'exit'" aria-label="{{ m.type === 'entry' ? 'Entrada' : 'Saída' }} de {{ m.quantity }} unidades">
             {{ m.type === 'entry' ? '+' : '-' }}{{ m.quantity }}
           </div>
         </div>
       } @empty {
-        <p class="empty">Nenhuma movimentação registrada.</p>
+        <div class="empty" role="status">
+          <span class="material-symbols-outlined empty__icon" aria-hidden="true">inventory_2</span>
+          <p>Nenhuma movimentação registrada.</p>
+        </div>
       }
     </div>
   </section>

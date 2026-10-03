@@ -23,6 +23,12 @@ export class AuthService {
     );
   }
 
+  register(name: string, email: string, password: string) {
+    return this.http.post<User>('/api/auth/register', { name, email, password }).pipe(
+      tap(u => this.user.set(u))
+    );
+  }
+
   logout() {
     return this.http.post('/api/auth/logout', {}).pipe(
       tap(() => { this.user.set(null); this.router.navigate(['/login']); })

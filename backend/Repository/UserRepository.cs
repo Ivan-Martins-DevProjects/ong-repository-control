@@ -37,4 +37,28 @@ public class UserRepository
         }
         catch (Exception ex) { throw new ApplicationException("Erro ao buscar usuário.", ex); }
     }
+
+    public async Task CreateAsync(User user)
+    {
+        try
+        {
+            await using var conn = new NpgsqlConnection(_cs);
+            await conn.OpenAsync();
+            await using var cmd = new NpgsqlCommand(
+                "INSERT INTO users (name, email, password_hash, password_salt, role, created_at) " +
+                "VALUES (@name, @email, @passwordHash, @passwordSalt, @role, @createdAt)", conn);
+            cmd.Parameters.AddWithValue("name", user.Name);
+            cmd.Parameters.AddWithValue("email", user.Email);
+            cmd.Parameters.AddWithValue("passwordHash", user.PasswordHash);
+            cmd.Parameters.AddWithValue("passwordSalt", user.PasswordSalt);
+            cmd.Parameters.AddWithValue("role", user.Role);
+            cmd.Parameters.AddWithValue("createdAt", user.CreatedAt);
+            await cmd.ExecuteNonQueryAsync();
+        }
+        catch (NpgsqlException ex) when (ex.SqlState == "23505")
+        {
+            throw new ApplicationException("Email já cadastrado.");
+        }
+        catch (Exception ex) { throw new ApplicationException("Erro ao criar usuário.", ex); }
+    }
 }

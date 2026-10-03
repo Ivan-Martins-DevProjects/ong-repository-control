@@ -4,6 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 export enum ApiEndpoint {
   AuthLogin = '/api/auth/login',
   AuthLogout = '/api/auth/logout',
+  AuthRegister = '/api/auth/register',
   Inbound = '/api/inbound',
   InboundAll = '/api/inbound/all',
   Stock = '/api/stock',

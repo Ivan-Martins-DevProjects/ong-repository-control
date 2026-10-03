@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: repositorycontrol-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Defina POSTGRES_USER no arquivo .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env}
+      POSTGRES_DB: ${POSTGRES_DB:?Defina POSTGRES_DB no arquivo .env}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend-go:
+    build:
+      context: .
+      dockerfile: Dockerfile.go.backend
+    container_name: repositorycontrol-backend-go
+    user: "${UID:-1000}:${GID:-1000}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: repositorycontrol-frontend
+    depends_on:
+      - backend-go
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - DOCKER=true
+
+volumes:
+  postgres_data:

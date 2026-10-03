@@ -60,23 +60,23 @@ export class DashboardPage implements AfterViewInit {
       data: {
         labels: md.map(m => m.label),
         datasets: [
-          { label: 'Entradas', data: md.map(m => m.entries), borderColor: '#4ade80', backgroundColor: 'rgba(74,222,128,0.08)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#4ade80' },
-          { label: 'Saídas', data: md.map(m => m.exits), borderColor: '#f87171', backgroundColor: 'rgba(248,113,113,0.08)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#f87171' },
+          { label: 'Entradas', data: md.map(m => m.entries), borderColor: '#2d8b57', backgroundColor: 'rgba(45,139,87,0.08)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#2d8b57' },
+          { label: 'Saídas', data: md.map(m => m.exits), borderColor: '#c4704b', backgroundColor: 'rgba(196,112,75,0.08)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#c4704b' },
         ],
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 16, font: { size: 12 }, color: '#94a3b8' } } },
-        scales: { y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b' } }, x: { grid: { display: false }, ticks: { color: '#64748b' } } },
+        plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 16, font: { size: 12 }, color: '#5c7a6b' } } },
+        scales: { y: { beginAtZero: true, grid: { color: '#e4e1da' }, ticks: { color: '#8fa69a' } }, x: { grid: { display: false }, ticks: { color: '#8fa69a' } } },
       },
     });
 
     this.pieChart = new Chart(this.pieCanvas.nativeElement, {
       type: 'doughnut',
-      data: { labels: ['Entradas', 'Saídas'], datasets: [{ data: [pd.entries, pd.exits], backgroundColor: ['#4ade80', '#f87171'], borderWidth: 0 }] },
+      data: { labels: ['Entradas', 'Saídas'], datasets: [{ data: [pd.entries, pd.exits], backgroundColor: ['#2d8b57', '#c4704b'], borderWidth: 0 }] },
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16, font: { size: 12 }, color: '#94a3b8' } } },
+        plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16, font: { size: 12 }, color: '#5c7a6b' } } },
         cutout: '65%',
       },
     });

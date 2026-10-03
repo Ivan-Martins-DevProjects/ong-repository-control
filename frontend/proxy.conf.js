@@ -1,6 +1,10 @@
+const target = process.env.DOCKER === "true"
+  ? "http://backend-go:8080"
+  : "http://localhost:8080";
+
 module.exports = {
   "/api": {
-    target: process.env.DOCKER ? "http://backend:5045" : "http://localhost:5045",
+    target,
     secure: false,
     changeOrigin: true,
   },
