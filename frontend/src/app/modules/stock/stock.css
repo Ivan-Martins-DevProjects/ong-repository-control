@@ -1,0 +1,119 @@
+.content {
+  padding: 20px 20px;
+  border: none;
+  border-radius: 20px;
+  box-shadow: -5px 10px 5px rgba(0, 0, 0, 0.1);
+  margin: 10px 10px;
+  background-color: #fff;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header button {
+  background-color: #1b3a2d;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease-in;
+}
+
+.header button:hover {
+  scale: 1.05;
+}
+
+.items {
+  margin-top: 20px;
+  padding: 20px 20px;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+}
+
+.item-quantity {
+  border: none;
+  border-radius: 50%;
+  background-color: #1b3a2d;
+  color: #fff;
+  font-weight: bold;
+  font-size: 30px;
+  padding: 5px 20px;
+}
+
+.detail-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.description {
+  font-size: 13px;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.card-actions button {
+  border: none;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+.card-actions button:hover {
+  scale: 1.1;
+}
+
+.edit {
+  background-color: #444fff;
+}
+
+.exclude {
+  background-color: red;
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(245, 243, 238, 0.25);
+  border-top-color: #f5f3ee;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

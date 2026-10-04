@@ -2,12 +2,10 @@ package repository
 
 import (
 	"errors"
+	"strings"
 
 	"gorm.io/gorm"
 
-	"github.com/jackc/pgx/v5/pgconn"
-
-	"github.com/Ivan-Martins-DevProjects/RepoControl/internal/database"
 	"github.com/Ivan-Martins-DevProjects/RepoControl/internal/domain"
 	apperror "github.com/Ivan-Martins-DevProjects/RepoControl/internal/domain/app_error"
 )
@@ -24,10 +22,6 @@ type userRepository struct {
 func NewUserRepository(db *gorm.DB) UserRepository {
 	return &userRepository{db: db}
 }
-
-const (
-	UNIQUE_EMAIL_CONSTRAINT = "uni_users_email"
-)
 
 func (r *userRepository) FindByEmail(email string) (*domain.User, error) {
 	var user domain.User
@@ -51,16 +45,14 @@ func (r *userRepository) CreateUser(user domain.User) (string, error) {
 
 	result := r.db.Create(&user)
 	if result.Error != nil {
-		var pgErr *pgconn.PgError
+		errMsg := result.Error.Error()
 
-		if errors.As(result.Error, &pgErr) {
-			if pgErr.Code == database.UNIQUE_CONSTRAINT {
-
-				if pgErr.ConstraintName == UNIQUE_EMAIL_CONSTRAINT {
-					return "", apperror.BadRequest("Email já está cadastrado", result.Error)
-				}
-				return "", apperror.BadRequest("Violação de chave única", result.Error)
+		if strings.Contains(errMsg, "UNIQUE constraint failed") {
+			if strings.Contains(errMsg, "users.email") || strings.Contains(errMsg, "email") {
+				return "", apperror.BadRequest("Email já está cadastrado", result.Error)
 			}
+
+			return "", apperror.BadRequest("Violação de chave única", result.Error)
 		}
 
 		return "", apperror.InternalServerError("Erro ao criar usuário", result.Error)

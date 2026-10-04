@@ -1,0 +1,33 @@
+<div class="content">
+  <div class="header">
+    <h1 style="color: #1b3a2d; font-family: sans-serif;">Estoque</h1>
+    <button>
+      <span class="material-symbols-outlined" aria-hidden="true">add</span>
+      Adicionar produto
+    </button>
+  </div>
+
+  @if (loading()) {
+  <span class="spinner" aria-hidden="true"></span>
+  }
+  <div class="items">
+    <div class="card-item">
+      <div class="card-info">
+        <div class="item-quantity">2</div>
+        <div class="detail-info">
+          <span class="name">Arroz</span>
+          <span class="description">Tipos variados de arroz</span>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="edit">
+          <span class="material-symbols-outlined" aria-hidden="true">edit_square</span>
+        </button>
+        <button class="exclude">
+          <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

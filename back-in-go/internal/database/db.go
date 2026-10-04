@@ -2,41 +2,28 @@ package database
 
 import (
 	"log"
-	"os"
 
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
 	"github.com/Ivan-Martins-DevProjects/RepoControl/internal/domain"
 )
 
-const (
-	UNIQUE_CONSTRAINT = "23505"
-)
-
-var DB *gorm.DB
-
-func ConnectDB(useDefault bool) (*gorm.DB, error) {
-	dsn := os.Getenv("DATABASE_URL")
-	if dsn == "" && useDefault {
-		log.Print("String de conexão ao banco de dados não encontrada, usando string padrão.")
-		dsn = "postgres://repositorycontrol:repositorycontrol@localhost:5432/repositorycontrol?sslmode=disable"
-	}
-
-	if dsn == "" && !useDefault {
-		dsn = "postgres://repositorycontrol:repositorycontrol@localhost:5432/repositorycontrol?sslmode=disable"
-	}
-
-	var err error
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+func ConnectDB() (*gorm.DB, error) {
+	db, err := gorm.Open(sqlite.Open("data.db"), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Erro ao conectar ao banco de dados: %v", err)
+		log.Fatal("Erro ao abir banco de dados local: ", err)
 	}
 
-	err = DB.AutoMigrate(&domain.User{})
+	err = db.AutoMigrate(&domain.User{})
 	if err != nil {
-		log.Fatal("Falha ao migrar tabelas: ", err)
+		log.Fatal("Falha ao migrar tabela user: ", err)
 	}
 
-	return DB, nil
+	err = db.AutoMigrate(&domain.StockItem{})
+	if err != nil {
+		log.Fatal("Falha ao migrar tabela stock_item: ", err)
+	}
+
+	return db, nil
 }
