@@ -18,13 +18,13 @@ export class AuthService {
   readonly loading = signal(false);
 
   login(email: string, password: string) {
-    return this.http.post<User>('/api/auth/login', { email, password }).pipe(
+    return this.http.post<User>('/api/v1/auth/login', { email, password }).pipe(
       tap(u => this.user.set(u))
     );
   }
 
   register(name: string, email: string, password: string) {
-    return this.http.post<User>('/api/auth/register', { name, email, password }).pipe(
+    return this.http.post<User>('/api/v1/auth/register', { name, email, password }).pipe(
       tap(u => this.user.set(u))
     );
   }

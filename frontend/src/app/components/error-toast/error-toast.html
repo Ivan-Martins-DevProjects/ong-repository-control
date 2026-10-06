@@ -1,0 +1,29 @@
+<div
+  class="error-toast__backdrop"
+  [class.error-toast__backdrop--visible]="visible()"
+  aria-hidden="true"
+></div>
+
+<div
+  class="error-toast"
+  [class.error-toast--visible]="visible()"
+  [attr.aria-hidden]="!visible()"
+  role="alert"
+  aria-live="assertive"
+>
+  <span class="error-toast__icon material-symbols-outlined" aria-hidden="true">error</span>
+
+  <div class="error-toast__body">
+    <p class="error-toast__title">{{ title() }}</p>
+    <p class="error-toast__description">{{ description() }}</p>
+  </div>
+
+  <button
+    class="error-toast__close"
+    type="button"
+    (click)="dismiss()"
+    aria-label="Fechar notificação"
+  >
+    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+  </button>
+</div>

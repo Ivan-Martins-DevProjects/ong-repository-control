@@ -422,7 +422,7 @@ import {
   ɵɵvalidateAttribute,
   ɵɵviewQuery,
   ɵɵviewQuerySignal
-} from "./chunk-XUAMS7H2.js";
+} from "./chunk-GLNHQUQH.js";
 import {
   CONTAINER_HEADER_OFFSET,
   ChangeDetectionScheduler,
@@ -485,7 +485,6 @@ import {
   resource,
   runInInjectionContext,
   setAlternateWeakRefImpl,
-  setCurrentInjector,
   setInjectorProfilerContext,
   signal,
   store,
@@ -504,8 +503,11 @@ import {
   ɵɵnamespaceSVG,
   ɵɵresetView,
   ɵɵrestoreView
-} from "./chunk-BC543QNX.js";
+} from "./chunk-SX37BLSO.js";
 import "./chunk-RSS3ODKE.js";
+import {
+  setCurrentInjector
+} from "./chunk-4KGXAWPF.js";
 import "./chunk-GOMI4DH3.js";
 export {
   ANIMATION_MODULE_TYPE,

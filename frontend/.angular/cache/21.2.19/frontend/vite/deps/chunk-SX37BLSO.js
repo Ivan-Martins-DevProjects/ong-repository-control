@@ -5,6 +5,11 @@ import {
   Subscription
 } from "./chunk-RSS3ODKE.js";
 import {
+  getCurrentInjector,
+  isNotFound,
+  setCurrentInjector
+} from "./chunk-4KGXAWPF.js";
+import {
   __spreadProps,
   __spreadValues
 } from "./chunk-GOMI4DH3.js";
@@ -400,21 +405,6 @@ function runEffect(node) {
   } finally {
     consumerAfterComputation(node, prevNode);
   }
-}
-
-// node_modules/@angular/core/fesm2022/_not_found-chunk.mjs
-var _currentInjector = void 0;
-function getCurrentInjector() {
-  return _currentInjector;
-}
-function setCurrentInjector(injector) {
-  const former = _currentInjector;
-  _currentInjector = injector;
-  return former;
-}
-var NOT_FOUND = /* @__PURE__ */ Symbol("NotFound");
-function isNotFound(e) {
-  return e === NOT_FOUND || e?.name === "ɵNotFound";
 }
 
 // node_modules/@angular/core/fesm2022/_untracked-chunk.mjs
@@ -1292,7 +1282,7 @@ This can happen if the dependency type is a primitive like a string or if an anc
 
 Please check that 1) the type for the parameter at index ${index} is correct and 2) the correct Angular decorators are defined for this class and its ancestors.`);
 }
-function inject2(token, options) {
+function inject(token, options) {
   return ɵɵinject(token, convertToBitFlags(options));
 }
 function convertToBitFlags(flags) {
@@ -2768,7 +2758,7 @@ var PendingTasksInternal = class _PendingTasksInternal {
   pendingTasks = /* @__PURE__ */ new Set();
   destroyed = false;
   pendingTask = new BehaviorSubject(false);
-  debugTaskTracker = inject2(DEBUG_TASK_TRACKER, {
+  debugTaskTracker = inject(DEBUG_TASK_TRACKER, {
     optional: true
   });
   get hasPendingTasks() {
@@ -2824,10 +2814,10 @@ var EventEmitter_ = class extends Subject {
     super();
     this.__isAsync = isAsync;
     if (isInInjectionContext()) {
-      this.destroyRef = inject2(DestroyRef, {
+      this.destroyRef = inject(DestroyRef, {
         optional: true
       }) ?? void 0;
-      this.pendingTasks = inject2(PendingTasksInternal, {
+      this.pendingTasks = inject(PendingTasksInternal, {
         optional: true
       }) ?? void 0;
     }
@@ -3174,8 +3164,8 @@ var ErrorHandler = class {
 };
 var INTERNAL_APPLICATION_ERROR_HANDLER = new InjectionToken(typeof ngDevMode === "undefined" || ngDevMode ? "internal error handler" : "", {
   factory: () => {
-    const zone = inject2(NgZone);
-    const injector = inject2(EnvironmentInjector);
+    const zone = inject(NgZone);
+    const injector = inject(EnvironmentInjector);
     let userErrorHandler;
     return (e) => {
       zone.runOutsideAngular(() => {
@@ -3194,7 +3184,7 @@ var INTERNAL_APPLICATION_ERROR_HANDLER = new InjectionToken(typeof ngDevMode ===
 var errorHandlerEnvironmentInitializer = {
   provide: ENVIRONMENT_INITIALIZER,
   useValue: () => {
-    const handler = inject2(ErrorHandler, {
+    const handler = inject(ErrorHandler, {
       optional: true
     });
     if ((typeof ngDevMode === "undefined" || ngDevMode) && handler === null) {
@@ -3208,11 +3198,11 @@ var globalErrorListeners = new InjectionToken(typeof ngDevMode !== "undefined" &
     if (false) {
       return;
     }
-    const window2 = inject2(DOCUMENT).defaultView;
+    const window2 = inject(DOCUMENT).defaultView;
     if (!window2) {
       return;
     }
-    const errorHandler = inject2(INTERNAL_APPLICATION_ERROR_HANDLER);
+    const errorHandler = inject(INTERNAL_APPLICATION_ERROR_HANDLER);
     const rejectionListener = (e) => {
       errorHandler(e.reason);
       e.preventDefault();
@@ -3236,14 +3226,14 @@ var globalErrorListeners = new InjectionToken(typeof ngDevMode !== "undefined" &
     } else {
       setupEventListeners();
     }
-    inject2(DestroyRef).onDestroy(() => {
+    inject(DestroyRef).onDestroy(() => {
       window2.removeEventListener("error", errorListener);
       window2.removeEventListener("unhandledrejection", rejectionListener);
     });
   }
 });
 function provideBrowserGlobalErrorListeners() {
-  return makeEnvironmentProviders([provideEnvironmentInitializer(() => void inject2(globalErrorListeners))]);
+  return makeEnvironmentProviders([provideEnvironmentInitializer(() => void inject(globalErrorListeners))]);
 }
 function ɵunwrapWritableSignal(value) {
   return null;
@@ -3298,9 +3288,9 @@ var PROVIDED_ZONELESS = new InjectionToken(typeof ngDevMode === "undefined" || n
 });
 var SCHEDULE_IN_ROOT_ZONE = new InjectionToken(typeof ngDevMode === "undefined" || ngDevMode ? "run changes outside zone in root" : "");
 var PendingTasks = class _PendingTasks {
-  internalPendingTasks = inject2(PendingTasksInternal);
-  scheduler = inject2(ChangeDetectionScheduler);
-  errorHandler = inject2(INTERNAL_APPLICATION_ERROR_HANDLER);
+  internalPendingTasks = inject(PendingTasksInternal);
+  scheduler = inject(ChangeDetectionScheduler);
+  errorHandler = inject(INTERNAL_APPLICATION_ERROR_HANDLER);
   add() {
     const taskId = this.internalPendingTasks.add();
     return () => {
@@ -3408,7 +3398,7 @@ function effect(effectFn, options) {
   if (ngDevMode && options?.allowSignalWrites !== void 0) {
     console.warn(`The 'allowSignalWrites' flag is deprecated and no longer impacts effect() (writes are always allowed)`);
   }
-  const injector = options?.injector ?? inject2(Injector);
+  const injector = options?.injector ?? inject(Injector);
   let destroyRef = options?.manualCleanup !== true ? injector.get(DestroyRef) : null;
   let node;
   const viewContext = injector.get(ViewContext, null, {
@@ -3536,10 +3526,10 @@ function createEffectFn(node, fn) {
 var OutputEmitterRef = class {
   destroyed = false;
   listeners = null;
-  errorHandler = inject2(ErrorHandler, {
+  errorHandler = inject(ErrorHandler, {
     optional: true
   });
-  destroyRef = inject2(DestroyRef);
+  destroyRef = inject(DestroyRef);
   constructor() {
     this.destroyRef.onDestroy(() => {
       this.destroyed = true;
@@ -3625,7 +3615,7 @@ function resource(options) {
   }
   const oldNameForParams = options.request;
   const params = options.params ?? oldNameForParams ?? (() => null);
-  return new ResourceImpl(params, getLoader(options), options.defaultValue, options.equal ? wrapEqualityFn(options.equal) : void 0, options.debugName, options.injector ?? inject2(Injector));
+  return new ResourceImpl(params, getLoader(options), options.defaultValue, options.equal ? wrapEqualityFn(options.equal) : void 0, options.debugName, options.injector ?? inject(Injector));
 }
 var BaseWritableResource = class {
   value;
@@ -3937,7 +3927,6 @@ export {
   setThrowInvalidWriteToSignalError,
   signalSetFn,
   SIGNAL_NODE,
-  setCurrentInjector,
   setAlternateWeakRefImpl,
   Version,
   VERSION,
@@ -4016,7 +4005,7 @@ export {
   assertInjectImplementationNotEqual,
   ɵɵinject,
   ɵɵinvalidFactoryDep,
-  inject2 as inject,
+  inject,
   convertToBitFlags,
   attachInjectFlag,
   getFactoryDef,
@@ -4235,4 +4224,4 @@ export {
   encapsulateResourceError,
   ResourceValueError
 };
-//# sourceMappingURL=chunk-BC543QNX.js.map
+//# sourceMappingURL=chunk-SX37BLSO.js.map

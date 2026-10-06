@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpContextToken } from '@angular/common/http';
 import type { PagedResult } from './inbound-api.service';
+import { API_CONTEXT, API_VERSION, ApiVersion, BasicService } from './base-service';
 
 export interface ProductType {
   id: number;
@@ -40,11 +41,15 @@ export interface Movement {
 }
 
 @Injectable({ providedIn: 'root' })
-export class ProductTypeApiService {
-  private readonly http = inject(HttpClient);
+export abstract class ProductTypeApiService extends BasicService {
+  private readonly context = "product_service"
 
   getAll() {
-    return this.http.get<ProductType[]>('/api/product-types');
+    return this.http.get<ProductType[]>('/get-all', {
+      context: new HttpContext()
+        .set(API_CONTEXT, this.context)
+        .set(API_VERSION, ApiVersion.V1)
+    });
   }
 
   getCategories() {

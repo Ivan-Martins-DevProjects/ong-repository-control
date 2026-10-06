@@ -6,7 +6,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(cloned).pipe(
     catchError(err => {
-      if (err instanceof HttpErrorResponse && err.status === 401 && !req.url.includes('/api/auth/login')) {
+      if (err instanceof HttpErrorResponse && err.status === 401 && !req.url.includes('/auth/login')) {
         window.location.href = '/login';
       }
       return throwError(() => err);

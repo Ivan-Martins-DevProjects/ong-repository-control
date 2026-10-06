@@ -1,6 +1,6 @@
 <div class="content">
   <div class="header">
-    <h1 style="color: #1b3a2d; font-family: sans-serif;">Estoque</h1>
+    <h1>Estoque</h1>
     <button>
       <span class="material-symbols-outlined" aria-hidden="true">add</span>
       Adicionar produto
@@ -8,8 +8,31 @@
   </div>
 
   @if (loading()) {
-  <span class="spinner" aria-hidden="true"></span>
-  }
+  <div class="loading" role="status" aria-live="polite">
+    <span class="spinner" aria-hidden="true"></span>
+    <p class="loading__text">Carregando seu estoque...</p>
+    <p class="loading__hint">Só um instante, já buscamos os produtos para você</p>
+  </div>
+  } @else {
+
+  <div class="toolbar">
+    <div class="control control--name">
+      <label for="filter-name">Filtrar por nome</label>
+      <select id="filter-name">
+        <option value="">Todos os nomes</option>
+        <option value="arroz">Arroz</option>
+      </select>
+    </div>
+
+    <div class="control control--sort">
+      <label for="sort-quantity">Ordenar por quantidade</label>
+      <select id="sort-quantity">
+        <option value="asc">Crescente</option>
+        <option value="desc">Decrescente</option>
+      </select>
+    </div>
+  </div>
+
   <div class="items">
     <div class="card-item">
       <div class="card-info">
@@ -29,5 +52,6 @@
       </div>
     </div>
   </div>
+    }
 
 </div>

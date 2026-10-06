@@ -1,13 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { Sidebar } from './components/sidebar/sidebar';
+import { ErrorToast } from './components/error-toast/error-toast';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Sidebar],
+  imports: [RouterOutlet, Sidebar, ErrorToast],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

@@ -3,7 +3,7 @@ const target = process.env.DOCKER === "true"
   : "http://localhost:8080";
 
 module.exports = {
-  "/api": {
+  "/api/v1": {
     target,
     secure: false,
     changeOrigin: true,
