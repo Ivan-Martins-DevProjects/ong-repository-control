@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpContext, HttpContextToken } from '@angular/common/http';
 import type { PagedResult } from './inbound-api.service';
-import { API_CONTEXT, API_VERSION, ApiVersion, BasicService } from './base-service';
+import { API_CONTEXT, API_VERSION, SKIP_AUTH, ApiVersion, BasicService } from './base-service';
 
 export interface ProductType {
   id: number;
@@ -69,7 +69,11 @@ export abstract class ProductTypeApiService extends BasicService {
   }
 
   getAllPaged(page = 1, pageSize = 10) {
-    return this.http.get<PagedResult<ProductType>>(`/api/product-types/paged?page=${page}&pageSize=${pageSize}`);
+    return this.http.get<PagedResult<ProductType>>(`/get-all-paged/page=${page}&page_size=${pageSize}`, {
+      context: new HttpContext()
+        .set(API_CONTEXT, this.context)
+        .set(API_VERSION, ApiVersion.V1)
+    });
   }
 
   create(data: { name: string; category: string }) {
@@ -92,9 +96,15 @@ export abstract class ProductTypeApiService extends BasicService {
 @Injectable({ providedIn: 'root' })
 export class StockApiService {
   private readonly http = inject(HttpClient);
+  private readonly context = "stock_service"
 
   getAll(page = 1, pageSize = 20) {
-    return this.http.get<PagedResult<StockItem>>(`/api/stock?page=${page}&pageSize=${pageSize}`);
+    return this.http.get<PagedResult<StockItem>>(`/list-all-items?page=${page}&pageSize=${pageSize}`, {
+      context: new HttpContext()
+        .set(API_CONTEXT, this.context)
+        .set(API_VERSION, ApiVersion.V1)
+        .set(SKIP_AUTH, false)
+    });
   }
 
   getAllUnpaged() {

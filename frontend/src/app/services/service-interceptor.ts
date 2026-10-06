@@ -7,13 +7,16 @@ interface config {
   path: string
 }
 
-
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
 
   const config: config[] = [
     {
       name: "product_service",
       path: "/products"
+    },
+    {
+      name: "stock_service",
+      path: "/stock"
     }
   ]
 
@@ -27,9 +30,7 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
   const item = config.find(item => item.name === service)
   if (!item) {
     console.error("Service não encontrado");
-    return throwError(() =>
-      new Error(`Configuração não encontrada para o service: ${service}`)
-    );
+    return next(req)
   }
 
   request = req.clone({
@@ -46,5 +47,5 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
     })
   }
 
-  return next(req)
+  return next(request)
 }
